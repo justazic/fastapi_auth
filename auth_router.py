@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 from schemas import SignUpSchema, LoginSchema, ProfileUpdateSchema, ResetPasswordSchema
 import auth
-from fastapi_jwt_auth import AuthJWT
+from fastapi_jwt_auth2 import AuthJWT
 
 auth_router = APIRouter()
 

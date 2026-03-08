@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
-from .models import User
-from .schemas import SignUpSchema, LoginSchema, ProfileUpdateSchema, ResetPasswordSchema
-from fastapi_jwt_auth import AuthJWT
+from models import User
+from schemas import SignUpSchema, LoginSchema, ProfileUpdateSchema, ResetPasswordSchema
+from fastapi_jwt_auth2 import AuthJWT
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from fastapi.encoders import jsonable_encoder
@@ -21,27 +21,26 @@ async def sign_up(data: SignUpSchema, db: Session):
     if db_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Bunday username yoki email mavjud")
     
-    new_user = data.username
-    new_email = data.email
-    new_password = data.password
-    name = data.name
-    age = data.age
+    new_user = User(
+        username=data.username,
+        email=data.email,
+        password=generate_password_hash(data.password),
+        name=data.name,
+        age=data.age
+    )
     
     db.add(new_user)
-    db.add(new_email)
-    db.add(new_password)
     db.commit()
     db.refresh(new_user)
-    db.refresh(new_email)
-    db.refresh(new_password)
     
     return {
         "status": "201",
         "message": "User yaratildi",
-        "username": new_user,
-        "email": new_email,
-        "name": name,
-        "age": age
+        "data": {
+            "username": new_user.username,
+            "email": new_user.email,
+            "name": new_user.name
+        }
     }
     
 def login_user(db: Session, user: LoginSchema, Authorize: AuthJWT):

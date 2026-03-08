@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 import auth_router
 from product_router import router
+from library_router import lib_router
 from database import engine, Base
 from models import Book
-from fastapi_jwt_auth import AuthJWT
+from fastapi_jwt_auth2 import AuthJWT
 from schemas import Settings
 
 @AuthJWT.load_config
@@ -19,3 +20,4 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(router, prefix="/books")
 app.include_router(auth_router.auth_router, prefix="/auth")
+app.include_router(lib_router, prefix="/library")
